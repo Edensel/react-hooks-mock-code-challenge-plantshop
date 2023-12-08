@@ -19,7 +19,6 @@ function PlantPage() {
   }, []);
 
   const handleAddPlant = (newPlantData) => {
-    // Make a POST request to add a new plant
     fetch("http://localhost:6001/plants", {
       method: "POST",
       headers: {
@@ -29,7 +28,7 @@ function PlantPage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setPlants([...plants, data]); // Add the new plant to the list
+        setPlants([...plants, data]);
       })
       .catch((error) => {
         console.error("Error adding plant: ", error);
@@ -37,15 +36,23 @@ function PlantPage() {
   };
 
   const handleSoldOut = (id) => {
-    // Update the soldOut status for the plant with the given ID
-    // Make a PUT request to update the plant
-    // ...
+    const updatedPlants = plants.map((plant) =>
+      plant.id === id ? { ...plant, soldOut: true } : plant
+    );
 
-    // Example:
-    // const updatedPlants = plants.map((plant) =>
-    //   plant.id === id ? { ...plant, soldOut: true } : plant
-    // );
-    // setPlants(updatedPlants);
+    fetch(`http://localhost:6001/plants/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ soldOut: true }),
+    })
+      .then(() => {
+        setPlants(updatedPlants);
+      })
+      .catch((error) => {
+        console.error("Error updating sold out status: ", error);
+      });
   };
 
   const handleSearch = (searchTerm) => {
